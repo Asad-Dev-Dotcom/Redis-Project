@@ -4,11 +4,15 @@ import Product from "./model.js";
 import { createClient } from "redis";
 const app = express();
 
+app.use(express.json());
+
 const redisClient = createClient({
   url: "redis://127.0.0.1:6379",
 });
 
 redisClient.on("error", (err) => console.error("Redis Client Error", err));
+
+await redisClient.connect();
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -35,6 +39,7 @@ app.get("/getProduct/:id", async (req, res) => {
 });
 
 app.post("/addproduct", async (req, res) => {
+  console.log(req.body);
   const { name, price } = req.body;
   const product = await Product.create({
     name,
@@ -54,3 +59,5 @@ mongoose
 app.listen(3000, () => {
   console.log("Example app listening on port 3000!");
 });
+
+//
